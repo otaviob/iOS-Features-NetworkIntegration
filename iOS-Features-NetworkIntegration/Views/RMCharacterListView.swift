@@ -8,9 +8,9 @@
 import UIKit
 
 /// View that handless showing list of character
-final class CharacterListView: UIView {
+final class RMCharacterListView: UIView {
     
-    private let viewModel = CharacterListViewViewModel()
+    private let viewModel = RMCharacterListViewViewModel()
     
     private let spinner: UIActivityIndicatorView = {
         let spinner = UIActivityIndicatorView(style: .large)
@@ -21,11 +21,13 @@ final class CharacterListView: UIView {
     
     private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
         let colletionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         colletionView.isHidden = true
         colletionView.alpha = 0
         colletionView.translatesAutoresizingMaskIntoConstraints = false
-        colletionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        colletionView.register(RMCharacterCollectionViewCell.self, forCellWithReuseIdentifier: RMCharacterCollectionViewCell.cellIdentifier)
         return colletionView
     }()
     
@@ -39,10 +41,6 @@ final class CharacterListView: UIView {
         spinner.startAnimating()
         viewModel.fetchCharacters()
         setupUpCollectionView()
-        
-       
-
-        
     }
     
     required init?(coder: NSCoder) {
@@ -65,6 +63,7 @@ final class CharacterListView: UIView {
     
     private func setupUpCollectionView() {
         collectionView.dataSource = viewModel
+        collectionView.delegate = viewModel
         
         DispatchQueue.main.asyncAfter(deadline: .now()+2, execute: {
             self.spinner.stopAnimating()
